@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đếm Số Lần Xuất Hiện Của Các Từ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        .button {
+            width: 90%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .word {
+            margin: 5px 0;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .note {
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Đếm Số Lần Xuất Hiện Của Các Từ</h2>
+        <textarea id="text-input" class="input-field" rows="6"
+            placeholder="Nhập đoạn văn bản của bạn vào đây..."></textarea>
+        <button class="button" onclick="countWords()">Đếm từ</button>
+        <div id="error-message" class="error"></div>
+        <div id="result" class="result"></div>
+        <p class="note">Chú ý: Các từ sẽ được bỏ qua sự khác biệt giữa chữ hoa và chữ thường.</p>
+    </div>
+
+    <script>
+        // Danh sách các từ thông dụng cần lọc bỏ
+        const stopWords = [
+            "the", "is", "and", "in", "to", "of", "a", "an", "on", "at", "for", "with", "as", "by", "this", "that", "it", "i", "you", "we", "they", "he", "she"
+        ];
+
+        // Hàm đếm số lần xuất hiện của mỗi từ
+        function countWords() {
+            const textInput = document.getElementById('text-input').value.trim();
+            const errorMessage = document.getElementById('error-message');
+            const resultDiv = document.getElementById('result');
+            errorMessage.textContent = '';
+            resultDiv.textContent = '';
+
+            // Kiểm tra xem người dùng có nhập văn bản hay không
+            if (textInput === '') {
+                errorMessage.textContent = 'Vui lòng nhập đoạn văn bản!';
+                return;
+            }
+
+            // Chuyển văn bản thành chữ thường và tách thành các từ
+            const words = textInput.toLowerCase().match(/\w+('\w+)?/g);
+
+            if (!words) {
+                errorMessage.textContent = 'Không có từ nào trong đoạn văn bản!';
+                return;
+            }
+
+            // Tạo đối tượng đếm từ
+            const wordCount = {};
+
+            // Đếm số lần xuất hiện của mỗi từ, bỏ qua các từ thông dụng
+            words.forEach(word => {
+                if (!stopWords.includes(word)) {
+                    if (wordCount[word]) {
+                        wordCount[word]++;
+                    } else {
+                        wordCount[word] = 1;
+                    }
+                }
+            });
+
+            // Sắp xếp từ theo số lần xuất hiện (giảm dần)
+            const sortedWords = Object.keys(wordCount).sort((a, b) => wordCount[b] - wordCount[a]);
+
+            // Hiển thị kết quả
+            let resultHTML = '<h3>Danh sách từ và số lần xuất hiện:</h3>';
+            sortedWords.forEach(word => {
+                resultHTML += `<div class="word">${word}: ${wordCount[word]}</div>`;
+            });
+
+            resultDiv.innerHTML = resultHTML;
+        }
+    </script>
+
+</body>
+
+</html>
